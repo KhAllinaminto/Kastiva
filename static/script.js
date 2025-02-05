@@ -9,7 +9,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function showMessage(text, type) {
         messageDiv.textContent = text;
-        messageDiv.className = `alert alert-${type} ${text ? '' : 'd-none'}`;
+        messageDiv.className = `alert alert-${type} mt-3`;
+        messageDiv.classList.toggle('d-none', !text);
     }
 
     function validateYoutubeUrl(url) {
@@ -26,20 +27,15 @@ document.addEventListener('DOMContentLoaded', function() {
     function toggleOptions(show) {
         if (show) {
             options.classList.remove('d-none');
-            setTimeout(() => options.classList.add('show'), 10);
         } else {
-            options.classList.remove('show');
             options.classList.add('d-none');
         }
     }
 
     function toggleProgressBar(show) {
-        if (show) {
-            progressBar.classList.remove('d-none');
-            setTimeout(() => progressBar.classList.add('show'), 10);
-        } else {
-            progressBar.classList.remove('show');
-            progressBar.classList.add('d-none');
+        progressBar.classList.toggle('d-none', !show);
+        if (!show) {
+            updateProgress(0);
         }
     }
 
@@ -81,9 +77,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
             if (!response.ok) {
                 const errorData = await response.json();
-                if (response.status === 403) {
-                    throw new Error("هذا الفيديو يتطلب تسجيل الدخول إلى يوتيوب");
-                }
                 throw new Error(errorData.error || "حدث خطأ أثناء التحميل");
             }
 
@@ -109,7 +102,6 @@ document.addEventListener('DOMContentLoaded', function() {
             downloadBtn.disabled = false;
             setTimeout(() => {
                 toggleProgressBar(false);
-                updateProgress(0);
             }, 3000);
         }
     });

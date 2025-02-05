@@ -12,8 +12,7 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 # Initialize Flask app
-app = Flask(__name__, static_folder="static", template_folder="templates")
-app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB max file size
+app = Flask(__name__)
 CORS(app)
 
 # Configuration
@@ -52,10 +51,9 @@ def download():
         ydl_opts = {
             'format': f'bestvideo[height<={quality}][ext={format}]+bestaudio/best[ext=m4a]' if quality != 'best' else 'best',
             'outtmpl': os.path.join(DOWNLOAD_FOLDER, '%(title)s.%(ext)s'),
+            'merge_output_format': format,
             'restrictfilenames': True,
             'noplaylist': True,
-            'cookies_from_browser': ['chrome', 'firefox', 'safari', 'edge'],  # Try multiple browsers
-            'verbose': True
         }
 
         logger.debug(f"yt-dlp options: {ydl_opts}")
@@ -67,7 +65,7 @@ def download():
 
                 if not os.path.exists(file_path):
                     logger.error(f"Downloaded file not found: {file_path}")
-                    return jsonify({"error": "فشل في تحميل الملف - الرجاء تسجيل الدخول إلى يوتيوب"}), 404
+                    return jsonify({"error": "فشل في تحميل الملف"}), 404
 
                 logger.info(f"File downloaded successfully: {file_path}")
 
@@ -89,11 +87,8 @@ def download():
                 return response
 
             except Exception as ydl_error:
-                error_msg = str(ydl_error)
-                if "Sign in to confirm your age" in error_msg or "Sign in to confirm you're not a bot" in error_msg:
-                    return jsonify({"error": "هذا الفيديو يتطلب تسجيل الدخول إلى يوتيوب"}), 403
-                logger.error(f"yt-dlp error: {error_msg}")
-                return jsonify({"error": f"فشل في تحميل الفيديو: {error_msg}"}), 500
+                logger.error(f"yt-dlp error: {str(ydl_error)}")
+                return jsonify({"error": f"فشل في تحميل الفيديو: {str(ydl_error)}"}), 500
 
     except Exception as e:
         logger.error(f"Unexpected error: {str(e)}")
