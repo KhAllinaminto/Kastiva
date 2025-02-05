@@ -28,11 +28,19 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function showOptions() {
-        options.classList.remove('d-none');
+        // Remove d-none and invisible classes
+        options.classList.remove('d-none', 'invisible');
+        // Force a reflow to ensure transition works
+        void options.offsetWidth;
+        // Add show class for animation
+        options.classList.add('show');
+        console.log('Options shown:', options.className); // Debug log
     }
 
     function hideOptions() {
-        options.classList.add('d-none');
+        options.classList.remove('show');
+        options.classList.add('invisible');
+        console.log('Options hidden:', options.className); // Debug log
     }
 
     function toggleProgressBar(show) {
@@ -44,12 +52,12 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // Hide progress bar and options initially
-    hideOptions();
+    // Hide progress bar initially
     toggleProgressBar(false);
 
     goBtn.addEventListener('click', function() {
         const videoUrl = videoUrlInput.value.trim();
+        console.log('Go button clicked, URL:', videoUrl); // Debug log
 
         if (!videoUrl) {
             showMessage("الرجاء إدخال رابط الفيديو", "danger");
@@ -65,6 +73,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         showMessage("", "");
         showOptions();
+        console.log('Options should be visible now'); // Debug log
     });
 
     downloadBtn.addEventListener('click', async function() {
