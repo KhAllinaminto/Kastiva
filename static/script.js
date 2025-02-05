@@ -4,13 +4,13 @@ document.addEventListener('DOMContentLoaded', function() {
     const options = document.getElementById('options');
     const downloadBtn = document.getElementById('download-btn');
     const messageDiv = document.getElementById('message');
-    const progressBar = document.querySelector('.progress-bar');
-    const progress = document.querySelector('.progress');
+    const progressBar = document.querySelector('.progress');
+    const progressBarInner = document.querySelector('.progress-bar');
 
     function showMessage(text, type) {
         messageDiv.textContent = text;
+        messageDiv.className = `alert alert-${type} show`;
         messageDiv.style.display = text ? 'block' : 'none';
-        messageDiv.className = `alert alert-${type}`;
     }
 
     function validateYoutubeUrl(url) {
@@ -18,9 +18,21 @@ document.addEventListener('DOMContentLoaded', function() {
         return pattern.test(url);
     }
 
+    function showProgress(show) {
+        progressBar.style.display = show ? 'block' : 'none';
+        if (show) {
+            progressBarInner.style.width = '0%';
+        }
+    }
+
+    function updateProgress(percent) {
+        progressBarInner.style.width = `${percent}%`;
+        progressBarInner.setAttribute('aria-valuenow', percent);
+    }
+
     goBtn.addEventListener('click', function() {
         const videoUrl = videoUrlInput.value.trim();
-        
+
         if (!videoUrl) {
             showMessage("الرجاء إدخال رابط الفيديو", "danger");
             return;
@@ -47,18 +59,21 @@ document.addEventListener('DOMContentLoaded', function() {
 
         downloadBtn.disabled = true;
         showMessage("جاري تحميل الفيديو...", "info");
-        progressBar.style.display = 'block';
-        progress.style.width = '0%';
+        showProgress(true);
+        updateProgress(10);
 
         try {
             const response = await fetch(`/download?url=${encodeURIComponent(videoUrl)}&format=${format}&quality=${quality}`);
-            
+
             if (!response.ok) {
                 const errorData = await response.json();
                 throw new Error(errorData.error || "حدث خطأ أثناء التحميل");
             }
 
+            updateProgress(50);
             const blob = await response.blob();
+            updateProgress(75);
+
             const url = window.URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
@@ -68,14 +83,14 @@ document.addEventListener('DOMContentLoaded', function() {
             document.body.removeChild(a);
             window.URL.revokeObjectURL(url);
 
+            updateProgress(100);
             showMessage("تم التحميل بنجاح!", "success");
-            progress.style.width = '100%';
         } catch (error) {
             showMessage(error.message, "danger");
         } finally {
             downloadBtn.disabled = false;
             setTimeout(() => {
-                progressBar.style.display = 'none';
+                showProgress(false);
             }, 3000);
         }
     });
