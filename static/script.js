@@ -9,12 +9,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function showMessage(text, type) {
         messageDiv.textContent = text;
-        messageDiv.className = `alert alert-${type}`;
-        messageDiv.classList.remove('d-none');
-
-        if (!text) {
-            messageDiv.classList.add('d-none');
-        }
+        messageDiv.className = `alert alert-${type} ${text ? '' : 'd-none'}`;
     }
 
     function validateYoutubeUrl(url) {
@@ -31,7 +26,7 @@ document.addEventListener('DOMContentLoaded', function() {
     function toggleOptions(show) {
         if (show) {
             options.classList.remove('d-none');
-            options.classList.add('fade', 'show');
+            setTimeout(() => options.classList.add('show'), 10);
         } else {
             options.classList.remove('show');
             options.classList.add('d-none');
@@ -48,13 +43,10 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // Hide progress bar initially
+    // Hide progress bar and options initially
     toggleProgressBar(false);
+    toggleOptions(false);
 
-    // Remove automatic URL validation on input
-    videoUrlInput.removeEventListener('input', handleYoutubeUrl);
-
-    // Only validate URL when check button is clicked
     goBtn.addEventListener('click', function() {
         const videoUrl = videoUrlInput.value.trim();
 

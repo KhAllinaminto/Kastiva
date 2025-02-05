@@ -12,17 +12,6 @@ body {
     color: var(--bs-light);
 }
 
-.glow-box {
-    background: var(--bs-dark-bg-subtle);
-    border-radius: 1rem;
-    box-shadow: 0 0 15px var(--glow-color);
-    transition: all 0.3s ease;
-}
-
-.glow-box:hover {
-    box-shadow: 0 0 25px var(--border-glow);
-}
-
 .card {
     background-color: var(--bs-gray-800);
     border: 1px solid var(--bs-gray-700);
@@ -70,13 +59,17 @@ body {
     transform: translateY(-1px);
 }
 
-/* Options fade animation */
+/* Options styling */
 #options {
     opacity: 0;
     transition: opacity 0.3s ease-in-out;
 }
 
-#options.fade.show {
+#options:not(.d-none) {
+    display: block !important;
+}
+
+#options.show {
     opacity: 1;
 }
 
@@ -91,6 +84,10 @@ body {
     margin-top: 1rem;
 }
 
+.progress:not(.d-none) {
+    display: block !important;
+}
+
 .progress.show {
     opacity: 1;
 }
@@ -102,19 +99,13 @@ body {
     border-radius: 0.5rem;
 }
 
-#message {
-    margin-top: 20px;
-    transition: opacity 0.3s ease;
-}
-
+/* Alert styling */
 .alert {
-    transition: all 0.3s ease-in-out;
-    display: none;
     margin-top: 1rem;
+    transition: all 0.3s ease-in-out;
 }
 
-
-/* Responsive styles */
+/* Responsive styling */
 @media (max-width: 768px) {
     .container {
         padding: 1rem;
