@@ -7,16 +7,16 @@
     <link href="https://cdn.replit.com/agent/bootstrap-agent-dark-theme.min.css" rel="stylesheet">
     <link href="/static/style.css" rel="stylesheet">
 </head>
-<body class="bg-dark">
+<body>
     <div class="min-vh-100 d-flex align-items-center py-4">
         <div class="container">
             <div class="row justify-content-center">
                 <div class="col-md-8 col-lg-6">
-                    <div class="card border-0 shadow-lg">
-                        <div class="card-header text-center border-bottom border-light-subtle py-3">
-                            <h2 class="mb-0">تحميل فيديوهات يوتيوب</h2>
+                    <div class="card bg-dark border-light">
+                        <div class="card-header border-bottom border-light-subtle">
+                            <h2 class="text-center mb-0">تحميل فيديوهات يوتيوب</h2>
                         </div>
-                        <div class="card-body p-4">
+                        <div class="card-body">
                             <div class="mb-4">
                                 <input type="url" 
                                        class="form-control form-control-lg text-start" 
@@ -28,7 +28,7 @@
                                 </button>
                             </div>
 
-                            <div id="options" style="display: none;">
+                            <div id="options" class="d-none">
                                 <div class="row g-3 mb-4">
                                     <div class="col-md-6">
                                         <label class="form-label">الصيغة</label>
@@ -50,6 +50,7 @@
                                         </select>
                                     </div>
                                 </div>
+
                                 <button class="btn btn-success btn-lg w-100" id="download-btn">
                                     تحميل الفيديو
                                 </button>
@@ -57,10 +58,11 @@
                                 <div class="progress mt-4" style="height: 20px;">
                                     <div class="progress-bar progress-bar-striped progress-bar-animated" 
                                          role="progressbar" 
-                                         style="width: 0%"></div>
+                                         style="width: 0%">
+                                    </div>
                                 </div>
 
-                                <div id="message" class="alert mt-3" style="display: none;"></div>
+                                <div class="alert mt-3 d-none" id="message" role="alert"></div>
                             </div>
                         </div>
                     </div>

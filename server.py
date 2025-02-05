@@ -54,7 +54,7 @@ def download():
             'outtmpl': os.path.join(DOWNLOAD_FOLDER, '%(title)s.%(ext)s'),
             'restrictfilenames': True,
             'noplaylist': True,
-            'cookies_from_browser': 'chrome',  # Using Chrome cookies by default
+            'cookies_from_browser': ['chrome', 'firefox', 'safari', 'edge'],  # Try multiple browsers
             'verbose': True
         }
 
@@ -67,7 +67,7 @@ def download():
 
                 if not os.path.exists(file_path):
                     logger.error(f"Downloaded file not found: {file_path}")
-                    return jsonify({"error": "فشل في تحميل الملف"}), 404
+                    return jsonify({"error": "فشل في تحميل الملف - الرجاء تسجيل الدخول إلى يوتيوب"}), 404
 
                 logger.info(f"File downloaded successfully: {file_path}")
 
@@ -89,8 +89,11 @@ def download():
                 return response
 
             except Exception as ydl_error:
-                logger.error(f"yt-dlp error: {str(ydl_error)}")
-                return jsonify({"error": f"فشل في تحميل الفيديو: {str(ydl_error)}"}), 500
+                error_msg = str(ydl_error)
+                if "Sign in to confirm your age" in error_msg or "Sign in to confirm you're not a bot" in error_msg:
+                    return jsonify({"error": "هذا الفيديو يتطلب تسجيل الدخول إلى يوتيوب"}), 403
+                logger.error(f"yt-dlp error: {error_msg}")
+                return jsonify({"error": f"فشل في تحميل الفيديو: {error_msg}"}), 500
 
     except Exception as e:
         logger.error(f"Unexpected error: {str(e)}")
@@ -99,7 +102,6 @@ def download():
 if __name__ == '__main__':
     try:
         logger.info("Starting Flask application...")
-        # Explicitly set threaded=False to avoid potential thread-safety issues
-        app.run(host='0.0.0.0', port=5000, debug=True, threaded=False)
+        app.run(host='0.0.0.0', port=5000, debug=True)
     except Exception as e:
         logger.error(f"Failed to start application: {str(e)}")

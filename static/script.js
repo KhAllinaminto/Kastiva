@@ -9,20 +9,18 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function showMessage(text, type) {
         messageDiv.textContent = text;
-        messageDiv.className = `alert alert-${type} show`;
-        messageDiv.style.display = text ? 'block' : 'none';
+        messageDiv.className = `alert alert-${type}`;
+        messageDiv.classList.remove('d-none');
+
+        if (!text) {
+            messageDiv.classList.add('d-none');
+        }
     }
 
     function validateYoutubeUrl(url) {
-        const pattern = /^(https?:\/\/)?(www\.)?(youtube\.com\/watch\?v=|youtu\.be\/)[\w-]{11}$/;
-        return pattern.test(url);
-    }
-
-    function showProgress(show) {
-        progressBar.style.display = show ? 'block' : 'none';
-        if (show) {
-            progressBarInner.style.width = '0%';
-        }
+        return url.includes('youtube.com/watch?v=') || 
+               url.includes('youtu.be/') || 
+               url.includes('youtube.com/shorts/');
     }
 
     function updateProgress(percent) {
@@ -30,21 +28,50 @@ document.addEventListener('DOMContentLoaded', function() {
         progressBarInner.setAttribute('aria-valuenow', percent);
     }
 
+    function toggleOptions(show) {
+        if (show) {
+            options.classList.remove('d-none');
+            options.classList.add('fade', 'show');
+        } else {
+            options.classList.remove('show');
+            options.classList.add('d-none');
+        }
+    }
+
+    function toggleProgressBar(show) {
+        if (show) {
+            progressBar.classList.remove('d-none');
+            setTimeout(() => progressBar.classList.add('show'), 10);
+        } else {
+            progressBar.classList.remove('show');
+            progressBar.classList.add('d-none');
+        }
+    }
+
+    // Hide progress bar initially
+    toggleProgressBar(false);
+
+    // Remove automatic URL validation on input
+    videoUrlInput.removeEventListener('input', handleYoutubeUrl);
+
+    // Only validate URL when check button is clicked
     goBtn.addEventListener('click', function() {
         const videoUrl = videoUrlInput.value.trim();
 
         if (!videoUrl) {
             showMessage("الرجاء إدخال رابط الفيديو", "danger");
+            toggleOptions(false);
             return;
         }
 
         if (!validateYoutubeUrl(videoUrl)) {
             showMessage("الرجاء إدخال رابط يوتيوب صحيح", "danger");
+            toggleOptions(false);
             return;
         }
 
-        options.style.display = 'block';
         showMessage("", "");
+        toggleOptions(true);
     });
 
     downloadBtn.addEventListener('click', async function() {
@@ -52,14 +79,9 @@ document.addEventListener('DOMContentLoaded', function() {
         const format = document.getElementById('format').value;
         const quality = document.getElementById('quality').value;
 
-        if (!videoUrl) {
-            showMessage("الرجاء إدخال رابط الفيديو", "danger");
-            return;
-        }
-
         downloadBtn.disabled = true;
         showMessage("جاري تحميل الفيديو...", "info");
-        showProgress(true);
+        toggleProgressBar(true);
         updateProgress(10);
 
         try {
@@ -67,6 +89,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
             if (!response.ok) {
                 const errorData = await response.json();
+                if (response.status === 403) {
+                    throw new Error("هذا الفيديو يتطلب تسجيل الدخول إلى يوتيوب");
+                }
                 throw new Error(errorData.error || "حدث خطأ أثناء التحميل");
             }
 
@@ -86,11 +111,13 @@ document.addEventListener('DOMContentLoaded', function() {
             updateProgress(100);
             showMessage("تم التحميل بنجاح!", "success");
         } catch (error) {
+            console.error('Download error:', error);
             showMessage(error.message, "danger");
         } finally {
             downloadBtn.disabled = false;
             setTimeout(() => {
-                showProgress(false);
+                toggleProgressBar(false);
+                updateProgress(0);
             }, 3000);
         }
     });
