@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>موقع تحميل الفيديوهات والأصوات</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <div class="glow-box">
+            <h1>موقع تحميل الفيديوهات والأصوات</h1>
+            <div class="input-group">
+                <input type="text" id="video-url" placeholder="أدخل رابط الفيديو هنا">
+                <button id="go-btn">تشغيل</button>
+            </div>
+            <div class="options" id="options" style="display: none;">
+                <select id="format">
+                    <option value="mp4">MP4 (فيديو)</option>
+                    <option value="mp3">MP3 (صوت)</option>
+                </select>
+                <select id="quality">
+                    <option value="144">144p</option>
+                    <option value="360">360p</option>
+                    <option value="720">720p</option>
+                    <option value="1080">1080p</option>
+                </select>
+                <button id="download-btn">تحميل</button>
+            </div>
+            <div class="progress-bar" style="display: none;">
+                <div class="progress"></div>
+            </div>
+            <p id="message"></p>
+        </div>
+    </div>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

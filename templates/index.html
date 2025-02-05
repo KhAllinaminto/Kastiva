@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تحميل فيديوهات يوتيوب</title>
+    <link href="https://cdn.replit.com/agent/bootstrap-agent-dark-theme.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="/static/style.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header text-center">
+                        <h2 class="mb-0"><i class="fab fa-youtube text-danger"></i> تحميل فيديوهات يوتيوب</h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-4">
+                            <label for="video-url" class="form-label">رابط الفيديو</label>
+                            <div class="input-group">
+                                <input type="url" class="form-control" id="video-url" 
+                                       placeholder="https://www.youtube.com/watch?v=...">
+                                <button class="btn btn-primary" id="go-btn">
+                                    <i class="fas fa-search"></i> فحص
+                                </button>
+                            </div>
+                        </div>
+
+                        <div id="options" class="mb-4" style="display: none;">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="format" class="form-label">الصيغة</label>
+                                    <select class="form-select" id="format">
+                                        <option value="mp4">MP4</option>
+                                        <option value="webm">WebM</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="quality" class="form-label">الجودة</label>
+                                    <select class="form-select" id="quality">
+                                        <option value="best">أفضل جودة</option>
+                                        <option value="1080">1080p</option>
+                                        <option value="720">720p</option>
+                                        <option value="480">480p</option>
+                                        <option value="360">360p</option>
+                                        <option value="240">240p</option>
+                                        <option value="144">144p</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <button class="btn btn-success w-100" id="download-btn">
+                                <i class="fas fa-download"></i> تحميل
+                            </button>
+                        </div>
+
+                        <div id="message" class="alert" style="display: none;"></div>
+
+                        <div class="progress-bar" style="display: none;">
+                            <div class="progress"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/script.js"></script>
+</body>
+</html>
