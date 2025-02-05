@@ -12,7 +12,7 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 # Initialize Flask app
-app = Flask(__name__)
+app = Flask(__name__, static_folder='static', template_folder='templates')
 app.secret_key = os.environ.get("FLASK_SECRET_KEY", "your-secret-key-here")
 CORS(app)
 
@@ -52,7 +52,7 @@ def download():
         ydl_opts = {
             'format': f'bestvideo[height<={quality}][ext={format}]+bestaudio/best[ext=m4a]' if quality != 'best' else 'best',
             'outtmpl': os.path.join(DOWNLOAD_FOLDER, '%(title)s.%(ext)s'),
-            'merge_output_format': format,
+            'merge_output_format': format if format == 'mp4' else None,
             'restrictfilenames': True,
             'noplaylist': True,
         }
@@ -97,11 +97,9 @@ def download():
 
 @app.route('/static/<path:filename>')
 def static_files(filename):
+    logger.debug(f"Serving static file: {filename}")
     return send_from_directory('static', filename)
 
 if __name__ == '__main__':
-    try:
-        logger.info("Starting Flask application...")
-        app.run(host='0.0.0.0', port=5000, debug=True)
-    except Exception as e:
-        logger.error(f"Failed to start application: {str(e)}")
+    logger.info("Starting Flask application...")
+    app.run(host='0.0.0.0', port=5000, debug=True)

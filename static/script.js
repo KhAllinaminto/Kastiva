@@ -10,7 +10,10 @@ document.addEventListener('DOMContentLoaded', function() {
     function showMessage(text, type) {
         messageDiv.textContent = text;
         messageDiv.className = `alert alert-${type} mt-3`;
-        messageDiv.classList.toggle('d-none', !text);
+        messageDiv.classList.remove('d-none');
+        if (!text) {
+            messageDiv.classList.add('d-none');
+        }
     }
 
     function validateYoutubeUrl(url) {
@@ -24,38 +27,44 @@ document.addEventListener('DOMContentLoaded', function() {
         progressBarInner.setAttribute('aria-valuenow', percent);
     }
 
-    function toggleOptions(show) {
-        options.classList.toggle('d-none', !show);
+    function showOptions() {
+        options.classList.remove('d-none');
+    }
+
+    function hideOptions() {
+        options.classList.add('d-none');
     }
 
     function toggleProgressBar(show) {
-        progressBar.classList.toggle('d-none', !show);
-        if (!show) {
+        if (show) {
+            progressBar.classList.remove('d-none');
+        } else {
+            progressBar.classList.add('d-none');
             updateProgress(0);
         }
     }
 
     // Hide progress bar and options initially
+    hideOptions();
     toggleProgressBar(false);
-    toggleOptions(false);
 
     goBtn.addEventListener('click', function() {
         const videoUrl = videoUrlInput.value.trim();
 
         if (!videoUrl) {
             showMessage("الرجاء إدخال رابط الفيديو", "danger");
-            toggleOptions(false);
+            hideOptions();
             return;
         }
 
         if (!validateYoutubeUrl(videoUrl)) {
             showMessage("الرجاء إدخال رابط يوتيوب صحيح", "danger");
-            toggleOptions(false);
+            hideOptions();
             return;
         }
 
         showMessage("", "");
-        toggleOptions(true);
+        showOptions();
     });
 
     downloadBtn.addEventListener('click', async function() {
