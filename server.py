@@ -17,19 +17,30 @@ app.secret_key = os.environ.get("FLASK_SECRET_KEY", "your-secret-key-here")
 CORS(app)
 
 # Configuration
-DOWNLOAD_FOLDER = os.getenv('DOWNLOAD_FOLDER', 'downloads')
+DOWNLOAD_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'downloads')
 valid_formats = ['mp4', 'webm']
 valid_qualities = ['144', '240', '360', '480', '720', '1080', 'best']
 
 # Ensure download folder exists
-if not os.path.exists(DOWNLOAD_FOLDER):
-    os.makedirs(DOWNLOAD_FOLDER)
-    logger.info(f"Created download folder: {DOWNLOAD_FOLDER}")
+try:
+    if not os.path.exists(DOWNLOAD_FOLDER):
+        os.makedirs(DOWNLOAD_FOLDER)
+        logger.info(f"Created download folder: {DOWNLOAD_FOLDER}")
+    # Ensure the folder has correct permissions
+    os.chmod(DOWNLOAD_FOLDER, 0o755)
+    logger.info("Download directory setup completed successfully")
+except Exception as e:
+    logger.error(f"Failed to setup download directory: {str(e)}")
+    raise
 
 @app.route('/')
 def home():
     logger.debug("Loading home page")
-    return render_template('index.html')
+    try:
+        return render_template('index.html')
+    except Exception as e:
+        logger.error(f"Error rendering home page: {str(e)}")
+        return "Error loading page", 500
 
 @app.route('/download', methods=['GET'])
 def download():
@@ -101,5 +112,5 @@ def static_files(filename):
     return send_from_directory('static', filename)
 
 if __name__ == '__main__':
-    logger.info("Starting Flask application...")
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    port = int(os.environ.get('PORT', 5000))
+    app.run(host='0.0.0.0', port=port)
