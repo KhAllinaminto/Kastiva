@@ -13,6 +13,7 @@ logger = logging.getLogger(__name__)
 
 # Initialize Flask app
 app = Flask(__name__)
+app.secret_key = os.environ.get("FLASK_SECRET_KEY", "your-secret-key-here")
 CORS(app)
 
 # Configuration
@@ -93,6 +94,10 @@ def download():
     except Exception as e:
         logger.error(f"Unexpected error: {str(e)}")
         return jsonify({"error": str(e)}), 500
+
+@app.route('/static/<path:filename>')
+def static_files(filename):
+    return send_from_directory('static', filename)
 
 if __name__ == '__main__':
     try:

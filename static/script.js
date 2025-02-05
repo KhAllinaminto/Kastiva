@@ -25,11 +25,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function toggleOptions(show) {
-        if (show) {
-            options.classList.remove('d-none');
-        } else {
-            options.classList.add('d-none');
-        }
+        options.classList.toggle('d-none', !show);
     }
 
     function toggleProgressBar(show) {
