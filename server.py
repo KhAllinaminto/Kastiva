@@ -4,29 +4,31 @@ from flask import Flask, request, jsonify, render_template, send_from_directory
 from flask_cors import CORS
 import yt_dlp
 
-# Set up logging first
+# إعداد نظام التسجيل (Logging)
 logging.basicConfig(
-    level=logging.INFO,  # Changed to INFO for production
+    level=logging.INFO,  # ضبط مستوى السجلات إلى INFO
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 )
 logger = logging.getLogger(__name__)
 
-# Initialize Flask app
+# تهيئة تطبيق Flask
 app = Flask(__name__, static_folder='static', template_folder='templates')
 app.secret_key = os.environ.get("FLASK_SECRET_KEY", "your-secret-key-here")
 CORS(app)
 
-# Configuration
-DOWNLOAD_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'downloads')
+# **تحديد المسارات والمجلدات**
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+DOWNLOAD_FOLDER = os.path.join(BASE_DIR, 'downloads')
+COOKIES_PATH = os.path.join(BASE_DIR, 'Kick', 'cookies.txt')  # 🔹 مسار ملف الكوكيز
+
 valid_formats = ['mp4', 'webm']
 valid_qualities = ['144', '240', '360', '480', '720', '1080', 'best']
 
-# Ensure download folder exists
+# إنشاء مجلد التنزيلات إذا لم يكن موجودًا
 try:
     if not os.path.exists(DOWNLOAD_FOLDER):
         os.makedirs(DOWNLOAD_FOLDER)
         logger.info(f"Created download folder: {DOWNLOAD_FOLDER}")
-    # Ensure the folder has correct permissions
     os.chmod(DOWNLOAD_FOLDER, 0o755)
     logger.info("Download directory setup completed successfully")
 except Exception as e:
@@ -60,12 +62,14 @@ def download():
         if quality not in valid_qualities:
             return jsonify({"error": f"جودة غير صالحة. الجودات المتاحة: {', '.join(valid_qualities)}"}), 400
 
+        # **إعداد yt-dlp مع ملف الكوكيز**
         ydl_opts = {
             'format': f'bestvideo[height<={quality}][ext={format}]+bestaudio/best[ext=m4a]' if quality != 'best' else 'best',
             'outtmpl': os.path.join(DOWNLOAD_FOLDER, '%(title)s.%(ext)s'),
             'merge_output_format': format if format == 'mp4' else None,
             'restrictfilenames': True,
             'noplaylist': True,
+            'cookiefile': COOKIES_PATH,  # 🔹 استخدام ملف الكوكيز
         }
 
         logger.debug(f"yt-dlp options: {ydl_opts}")
