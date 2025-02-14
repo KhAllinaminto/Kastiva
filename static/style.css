@@ -12,7 +12,7 @@ body {
 
 /* Card styling with gradient border */
 .card {
-    background-color: var(--bs-gray-800);
+    background-color: #FFD95F;
     border: none;
     position: relative;
     border-radius: 0.5rem;
