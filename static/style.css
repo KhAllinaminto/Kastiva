@@ -17,7 +17,7 @@ body {
     position: relative;
     border-radius: 0.5rem;
     border: 2px solid;
-    border-image-source: linear-gradient(45deg, #7C00FE, #00bfff, #aaa);
+    border-image-source: linear-gradient(45deg, #7C00FE, #00bfff, #FFD95F);
     border-image-slice: 1;
 }
 
